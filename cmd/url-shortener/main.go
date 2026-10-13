@@ -8,9 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	ssogrpc "url-shortener/internal/clients/sso/grpc"
 	"url-shortener/internal/config"
-	"url-shortener/internal/http-server/handlers/auth/login"
 	"url-shortener/internal/http-server/handlers/redirect"
 	"url-shortener/internal/http-server/handlers/url/save"
 	"url-shortener/internal/http-server/middleware/auth"
@@ -35,17 +33,17 @@ func main() {
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	ssoClient, err := ssogrpc.New(
-		context.Background(),
-		log,
-		cfg.Clients.SSO.Address,
-		cfg.Clients.SSO.Timeout,
-		cfg.Clients.SSO.RetriesCount,
-	)
-	if err != nil {
-		log.Error("failed to init sso client", sl.Err(err))
-		os.Exit(1)
-	}
+	// ssoClient, err := ssogrpc.New(
+	// 	context.Background(),
+	// 	log,
+	// 	cfg.Clients.SSO.Address,
+	// 	cfg.Clients.SSO.Timeout,
+	// 	cfg.Clients.SSO.RetriesCount,
+	// )
+	// if err != nil {
+	// 	log.Error("failed to init sso client", sl.Err(err))
+	// 	os.Exit(1)
+	// }
 
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
@@ -72,8 +70,6 @@ func main() {
 		r.Post("/", save.New(log, storage))
 		//TODO delete url
 	})
-
-	router.Post("/login", login.New(log, ssoClient, cfg.AppID))
 
 	router.Get("/{alias}", redirect.New(log, storage))
 

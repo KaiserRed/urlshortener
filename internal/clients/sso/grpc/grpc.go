@@ -13,7 +13,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/status"
 )
 
 type Client struct {
@@ -70,25 +69,6 @@ func (c *Client) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 
 // ErrInvalidCredentials is returned by Login when credentials are rejected by SSO.
 var ErrInvalidCredentials = errors.New("invalid credentials")
-
-// Login obtains an auth token from SSO for the given credentials and app.
-func (c *Client) Login(ctx context.Context, email, password string, appID int) (string, error) {
-	const op = "grpc.Login"
-
-	resp, err := c.api.Login(ctx, &ssov1.LoginRequest{
-		Email:    email,
-		Password: password,
-		AppId:    int32(appID),
-	})
-	if err != nil {
-		if status.Code(err) == codes.InvalidArgument {
-			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
-		}
-		return "", fmt.Errorf("%s: %w", op, err)
-	}
-
-	return resp.Token, nil
-}
 
 // InterceptorLogger adapts slog logger to interceptor logger.
 // This code is simple enough to be copied and not imported.
