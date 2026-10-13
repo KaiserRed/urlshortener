@@ -1,0 +1,13 @@
+env: "local"
+storage_path: "./storage/storage.db"
+app_id: 1
+app_secret: "test-secret"
+http_server:
+  address: "localhost:8082"
+  timeout: 4s
+  idle_timeout: 60s
+clients:
+  sso:
+    address: "localhost:44043"
+    timeout: 5s
+    retriescount: 3
