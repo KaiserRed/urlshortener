@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS url(
+    id INTEGER PRIMARY KEY,
+    alias TEXT NOT NULL UNIQUE,
+    url TEXT NOT NULL,
+    user_id INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
+CREATE INDEX IF NOT EXISTS idx_url_user_id ON url(user_id);

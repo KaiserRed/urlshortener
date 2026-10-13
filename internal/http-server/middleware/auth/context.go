@@ -15,6 +15,11 @@ func UIDFromContext(ctx context.Context) (int64, bool) {
 	return uid, ok
 }
 
+// WithUserID stores the authenticated user ID in ctx.
+func WithUserID(ctx context.Context, uid int64) context.Context {
+	return context.WithValue(ctx, uidKey, uid)
+}
+
 // IsAdminFromContext returns the admin flag stored in ctx.
 func IsAdminFromContext(ctx context.Context) (bool, bool) {
 	v, ok := ctx.Value(isAdminKey).(bool)
