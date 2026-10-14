@@ -1,0 +1,41 @@
+version: '3'
+
+vars:
+  BIN: bin
+  CONFIG: config/local.yaml
+  STORAGE: ./storage/storage.db
+  MIGRATIONS: ./migrations
+
+tasks:
+  build:
+    desc: Build url-shortener and migrator
+    cmds:
+      - go build -o {{.BIN}}/url-shortener ./cmd/url-shortener
+      - go build -o {{.BIN}}/migrator ./cmd/migrator
+
+  migrate:
+    desc: Apply migrations
+    deps: [build]
+    cmds:
+      - ./{{.BIN}}/migrator -storage-path={{.STORAGE}} -migrations-path={{.MIGRATIONS}}
+
+  run:
+    desc: Run the service locally
+    deps: [migrate]
+    cmds:
+      - ./{{.BIN}}/url-shortener --config={{.CONFIG}}
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test -race -count=1 ./...
+
+  mocks:
+    desc: Regenerate mocks via mockery (uses .mockery.yml)
+    cmds:
+      - go run github.com/vektra/mockery/v3@v3.8.1
+
+  clean:
+    desc: Remove binaries and the local database (including -wal/-shm)
+    cmds:
+      - rm -rf {{.BIN}} {{.STORAGE}}*

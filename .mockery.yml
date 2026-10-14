@@ -1,0 +1,26 @@
+template: testify
+all: false
+dir: "{{.InterfaceDir}}/mocks"
+pkgname: mocks
+structname: "{{.InterfaceName}}"
+force-file-write: true
+
+packages:
+  url-shortener/internal/http-server/handlers/url/save:
+    interfaces:
+      URLSaver:
+        config:
+          filename: "URLSaver.go"
+  url-shortener/internal/http-server/handlers/redirect:
+    interfaces:
+      URLGetter:
+        config:
+          filename: "URLGetter.go"
+  url-shortener/internal/http-server/handlers/url/delete:
+    interfaces:
+      URLDeleter:
+        config:
+          filename: "URLDeleter.go"
+      PermissionProvider:
+        config:
+          filename: "PermissionProvider.go"
